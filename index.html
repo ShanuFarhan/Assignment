@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>font_data.html</title>
+</head>
+<body>
+    <canvas id="canvas" width="16" height="34"></canvas>
+    <a href="#" id="downloadLink" download="output.txt">Download</a>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#FFCC00';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '16px Arial'; 
+        ctx.fillText('A', canvas.width / 2, canvas.height / 2);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let pixelData = '';
+
+        for (let i = 0; i < imageData.length; i += 4) {
+            const hexColor = rgbToHex(imageData[i], imageData[i + 1], imageData[i + 2]);
+            pixelData += `0x${hexColor}, `;
+        }
+
+        function rgbToHex(r, g, b) {
+            return ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+        }
+
+        function downloadPixelData() {
+            const blob = new Blob([pixelData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.getElementById('downloadLink');
+            link.href = url;
+        }
+
+        document.getElementById('downloadLink').addEventListener('click', downloadPixelData);
+    </script>
+</body>
+</html>
